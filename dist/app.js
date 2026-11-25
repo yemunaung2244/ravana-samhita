@@ -67,7 +67,8 @@ const pairForOffset = offset => {
   return [28 - distance, distance];
 };
 const label = index => stars[index] + 'နက္ခတ်';
-const numberedLabel = index => number(index + 1) + '. ' + label(index);
+const starNumber = index => (index === abhijitIndex ? '×' : number(index < abhijitIndex ? index + 1 : index));
+const numberedLabel = index => starNumber(index) + '. ' + label(index);
 const point = (index, radius = 208) => {
   const angle = index * Math.PI / 14;
   return [260 + radius * Math.sin(angle), 260 - radius * Math.cos(angle)];
@@ -192,7 +193,7 @@ function drawWheel() {
     node.append(
       svg('title', {}, titleParts.join(' · ')),
       svg('circle', { cx: x, cy: y, r: 17, class: circleClass }),
-      svg('text', { x, y, class: active ? 'active-number' : '' }, number(starIndex + 1)),
+      svg('text', { x, y, class: active ? 'active-number' : '' }, starNumber(starIndex)),
     );
     if (role) {
       const [bx, by] = point(offset, 237);
@@ -241,7 +242,7 @@ function rowLabel(offset, roles) {
   span.className = 'pair-cell';
   const index = document.createElement('span');
   index.className = 'number';
-  index.textContent = number(starIndex + 1);
+  index.textContent = starNumber(starIndex);
   const name = document.createElement('span');
   name.textContent = label(starIndex);
   span.append(index, name);

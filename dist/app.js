@@ -292,47 +292,83 @@ function selectOffsets(activeOffsets, keepFocus = false) {
   for (const item of find('pairs').querySelectorAll(`[data-group="${group}"]`)) {
     item.setAttribute('aria-pressed', 'true');
   }
+  for (const cell of find('pairs').querySelectorAll('td[data-offset]')) {
+    const cellOffset = Number(cell.dataset.offset);
+    cell.classList.toggle('is-occupied-cell', occupiedOffset === cellOffset);
+    cell.classList.toggle('is-pierced-cell', piercedOffset === cellOffset);
+  }
   selectedOffsets = activeOffsets;
   drawWheel();
   syncTableSelections();
 }
 
-function rowLabel(offset, roles) {
-  const starIndex = starAt(currentWheel, offset);
-  const span = document.createElement('span');
-  span.className = 'pair-cell';
-  const index = document.createElement('span');
-  index.className = 'number';
-  index.textContent = starNumber(starIndex);
-  const name = document.createElement('span');
-  name.textContent = label(starIndex);
-  span.append(index, name);
+function makeBadges(starIndex, roles) {
+  const stack = document.createElement('div');
+  stack.className = 'badge-stack';
   const role = roles.get(starIndex);
   if (role) {
     const badge = document.createElement('span');
     badge.className = 'role-badge';
     badge.textContent = role.shortTitle;
-    span.append(badge);
+    stack.append(badge);
   }
   for (const pName of planetsAtStar(activePlanetStars(), starIndex)) {
     const badge = document.createElement('span');
     badge.className = 'planet-badge ' + chartScope;
     badge.textContent = pName;
-    span.append(badge);
+    stack.append(badge);
   }
-  return span;
+  return stack;
 }
 
-function addRow(offsets, roles) {
+function fillStarCell(cell, offset) {
+  const starIndex = starAt(currentWheel, offset);
+  cell.dataset.offset = String(offset);
+  const index = document.createElement('span');
+  index.className = 'number';
+  index.textContent = starNumber(starIndex);
+  cell.append(index, document.createTextNode(stars[starIndex]));
+}
+
+function addGridRow(tbody, offsets, roles) {
   const activeOffsets = offsets.length === 1 ? [0, 14] : offsets;
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = offsets.length === 1 ? 'pair single' : 'pair';
-  button.dataset.group = activeOffsets.join(',');
-  button.setAttribute('aria-pressed', String(offsets.length === 1));
-  button.append(rowLabel(offsets[0], roles));
-  if (offsets.length === 2) button.append('–', rowLabel(offsets[1], roles));
-  button.addEventListener('click', () => {
+  const tr = tbody.insertRow();
+  tr.dataset.group = activeOffsets.join(',');
+  tr.setAttribute('aria-pressed', String(offsets.length === 1));
+  if (offsets.length === 1) {
+    const td = tr.insertCell();
+    td.colSpan = 4;
+    td.className = 'single-cell';
+    td.dataset.offset = String(offsets[0]);
+    const starIndex = starAt(currentWheel, offsets[0]);
+    const wrap = document.createElement('div');
+    wrap.className = 'single-wrap';
+    const nameWrap = document.createElement('span');
+    const index = document.createElement('span');
+    index.className = 'number';
+    index.textContent = starNumber(starIndex);
+    nameWrap.append(index, document.createTextNode(stars[starIndex]));
+    wrap.append(nameWrap);
+    const badges = makeBadges(starIndex, roles);
+    if (badges.childElementCount) wrap.append(badges);
+    td.append(wrap);
+  } else {
+    const leftStar = starAt(currentWheel, offsets[0]);
+    const rightStar = starAt(currentWheel, offsets[1]);
+    const leftBadgeCell = tr.insertCell();
+    leftBadgeCell.className = 'badge-col';
+    leftBadgeCell.append(makeBadges(leftStar, roles));
+    const leftStarCell = tr.insertCell();
+    leftStarCell.className = 'star-col';
+    fillStarCell(leftStarCell, offsets[0]);
+    const rightStarCell = tr.insertCell();
+    rightStarCell.className = 'star-col';
+    fillStarCell(rightStarCell, offsets[1]);
+    const rightBadgeCell = tr.insertCell();
+    rightBadgeCell.className = 'badge-col';
+    rightBadgeCell.append(makeBadges(rightStar, roles));
+  }
+  tr.addEventListener('click', () => {
     const star0 = starAt(currentWheel, activeOffsets[0]);
     const star1 = starAt(currentWheel, activeOffsets[1]);
     const p0 = planetsAtStar(activePlanetStars(), star0);
@@ -341,7 +377,6 @@ function addRow(offsets, roles) {
     else if (p1.length) focusStarOnWheel(star1, scopeLabel() + ' ' + p1.join('၊ '));
     else selectOffsets(activeOffsets, false);
   });
-  find('pairs').append(button);
 }
 
 function renderVedhaPanel() {
@@ -562,10 +597,13 @@ function renderBirthTable() {
 
 function renderPairs() {
   const roles = birthRoleMap();
-  find('pairs').replaceChildren();
-  addRow([0], roles);
-  for (let offset = 1; offset < 14; offset++) addRow([28 - offset, offset], roles);
-  addRow([14], roles);
+  const table = document.createElement('table');
+  table.className = 'pair-grid';
+  const tbody = table.createTBody();
+  addGridRow(tbody, [0], roles);
+  for (let offset = 1; offset < 14; offset++) addGridRow(tbody, [28 - offset, offset], roles);
+  addGridRow(tbody, [14], roles);
+  find('pairs').replaceChildren(table);
   selectOffsets(selectedOffsets, true);
 }
 

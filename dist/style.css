@@ -97,12 +97,21 @@ select {
 .wheel text { fill: var(--ink); text-anchor: middle; dominant-baseline: central; font-size: 12px; font-weight: 800; }
 .wheel text.active-number { fill: white; }
 .wheel .center-title { font-size: 20px; }
-.pairs { display: grid; gap: 4px; }
-.pair { border: 1px solid transparent; background: transparent; border-radius: 8px; color: var(--ink); display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; width: 100%; text-align: left; padding: 5px 7px; align-items: start; }
-.pair.single { display: block; text-align: center; }
-.pair[aria-pressed="true"] { background: #e0effa; border-color: #a9cbdf; }
-.pair .number { color: var(--muted); font-size: .8rem; margin-inline-end: .35em; }
-.pair-cell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 3px; }
+.pairs { overflow-x: auto; }
+.pair-grid { width: 100%; border-collapse: collapse; table-layout: fixed; background: var(--white); border: 1px solid #b4cfe0; border-radius: 10px; overflow: hidden; }
+.pair-grid td { border: 1px solid #c5dce9; padding: 7px 6px; text-align: center; vertical-align: middle; line-height: 1.45; }
+.pair-grid tr { cursor: pointer; transition: background .12s ease; }
+.pair-grid tr:hover td { background: #eef7fd; }
+.pair-grid tr[aria-pressed="true"] td { background: #e0effa; }
+.pair-grid td.star-col { width: 28%; font-weight: 600; font-size: .92rem; }
+.pair-grid td.badge-col { width: 22%; padding: 4px; }
+.pair-grid td.single-cell { font-weight: 700; font-size: .95rem; padding: 8px 10px; }
+.pair-grid td.is-occupied-cell { background: #d4ebfb !important; color: #0e3d5e; font-weight: 800; }
+.result.is-transit ~ .controls .pair-grid td.is-occupied-cell { background: #d2f0e0 !important; color: #0e4a2d; }
+.pair-grid td.is-pierced-cell { background: #fde6e4 !important; color: #8c2319; font-weight: 800; }
+.pair-grid .number { color: var(--muted); font-size: .78rem; margin-inline-end: .3em; font-weight: 700; }
+.badge-stack { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+.single-wrap { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 5px; }
 .role-badge, .planet-badge { display: inline-block; padding: 0 .45em; border-radius: 999px; font-size: .72rem; font-weight: 800; vertical-align: middle; line-height: 1.5; }
 .role-badge { background: #fff0d6; color: #8a4b08; border: 1px solid #e7c184; }
 .planet-badge.natal { background: #e3f1fc; color: #124b73; border: 1px solid #9ec6e2; }
@@ -153,4 +162,8 @@ select {
   .shell { width: calc(100% - 24px); }
   .top-inner { font-size: .85rem; }
   .filter-bar { grid-template-columns: 1fr; }
+  .pair-grid td { padding: 6px 3px; }
+  .pair-grid td.star-col { font-size: .8rem; }
+  .pair-grid td.single-cell { font-size: .85rem; }
+  .role-badge, .planet-badge { font-size: .66rem; padding: 0 .35em; }
 }

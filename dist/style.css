@@ -73,12 +73,24 @@ select {
 .wheel { background: white; margin: 14px 0 0; border: 1px solid var(--line); border-radius: 12px; padding: 8px; }
 .wheel svg { width: 100%; display: block; }
 .wheel figcaption { color: var(--muted); text-align: center; }
-#selection { margin-top: 12px; text-align: center; min-height: 2em; font-weight: 700; }
+.wheel-legend { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: .85rem; margin-top: 4px; }
+.wheel-legend span { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
+.wheel-legend .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot-occupied { background: var(--accent); }
+.result.is-transit .dot-occupied { background: #146c43; }
+.dot-pierced { background: #c0392b; }
+.dot-birth { background: #b86814; }
+#selection { margin-top: 12px; text-align: center; min-height: 2em; font-weight: 700; font-size: .95rem; }
 .wheel .grid { stroke: #aac9dc; fill: none; }
 .wheel .orbit-ring { stroke: #84b3d0; stroke-dasharray: 2 5; fill: none; }
-.wheel .axis { stroke: #5e9bbd; stroke-width: 3; }
+.wheel .axis { stroke: #c0392b; stroke-width: 3.5; stroke-dasharray: 6 4; }
 .wheel .node { fill: #f1f8fd; stroke: #96bed5; }
 .wheel .active { fill: var(--accent); stroke: var(--accent); }
+.wheel .occupied-node { fill: var(--accent); stroke: #0d3a57; stroke-width: 2.5; }
+.result.is-transit .wheel .occupied-node { fill: #146c43; stroke: #0d4a2e; }
+.wheel .pierced-node { fill: #c0392b; stroke: #8e241b; stroke-width: 2.5; }
+.wheel .planet-dot { fill: #15547b; }
+.result.is-transit .wheel .planet-dot { fill: #146c43; }
 .wheel .birth-node { stroke: #b86814; stroke-width: 2; }
 .wheel .birth-badge { fill: #b86814; stroke: white; stroke-width: 1.5; }
 .wheel .birth-badge-text { fill: white; font-size: 9px; font-weight: 800; }
@@ -100,6 +112,8 @@ select {
 .time-field { display: grid; gap: 5px; }
 .input-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
 .ghost-btn { min-height: 44px; padding: 0 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--white); color: var(--accent); font-weight: 700; white-space: nowrap; }
+.mini-btn { min-height: 30px; padding: 2px 10px; border-radius: 7px; border: 1px solid var(--line); background: var(--white); color: var(--accent); font-weight: 700; font-size: .82rem; white-space: nowrap; }
+.mini-btn:hover { background: #e4f3fc; }
 .section-head, .birth-header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; }
 .seg-tabs { display: inline-flex; gap: 4px; padding: 4px; background: #e4f2fb; border: 1px solid var(--line); border-radius: 11px; }
 .seg-tabs button { border: 1px solid transparent; background: transparent; color: var(--accent); font-weight: 800; padding: 7px 14px; border-radius: 8px; font-size: .9rem; }

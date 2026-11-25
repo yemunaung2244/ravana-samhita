@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="my">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#e3f3fc">
+  <meta name="description" content="ရာဝဏသံဟိတာကျမ်း အခန်း ၆၊ နက္ခတ်စက် ၉ မျိုးနှင့် မူရင်းစာမျက်နှာများ။">
+  <title>ရာဝဏသံဟိတာကျမ်း</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="shell top-inner">
+      <a class="brand" href="#top"><span class="mark" aria-hidden="true">✧</span>ရာဝဏသံဟိတာကျမ်း</a>
+      <a href="#reader">မူရင်းစာမျက်နှာများ</a>
+    </div>
+  </header>
+  <main class="shell" id="top">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">အခန်း ( ၆ )</p>
+        <h1>ရာဝဏ သံဟိတာကျမ်း။</h1>
+        <a class="chapter-link" href="#reader">နိဒါန်းဖတ်ရန်</a>
+      </div>
+      <div class="orbit" aria-hidden="true"><i></i>✧</div>
+    </section>
+    <nav id="modes" class="modes" aria-label="စက်ရွေးရန်"></nav>
+    <section class="workspace" aria-labelledby="wheel-title">
+      <div class="panel result">
+        <h2 id="wheel-title"></h2>
+        <p id="alias" class="eyebrow" hidden></p>
+        <figure class="wheel">
+          <svg id="wheel" viewBox="0 0 520 520" role="img" aria-labelledby="wheel-title"></svg>
+          <figcaption>နက္ခတ် ၂၈ လုံး</figcaption>
+        </figure>
+        <p id="selection" aria-live="polite"></p>
+      </div>
+      <div class="panel controls">
+        <h2>နက္ခတ်အတွဲများ</h2>
+        <div id="pairs" class="pairs"></div>
+        <a id="section-source" href="#reader">ဤစက်၏ မူရင်းစာမျက်နှာကို ဖတ်ရန်</a>
+      </div>
+    </section>
+    <section id="reader" class="panel controls reader" aria-labelledby="reader-title">
+      <h2 id="reader-title" tabindex="-1">မူရင်းစာမျက်နှာများ</h2>
+      <div class="reader-tools">
+        <button class="secondary" id="previous" type="button">ယခင်စာမျက်နှာ</button>
+        <label>စာမျက်နှာ<select id="page"></select></label>
+        <button class="secondary" id="next" type="button">နောက်စာမျက်နှာ</button>
+      </div>
+      <a id="original-link" target="_blank" rel="noopener">မူရင်းပုံ အရွယ်ပြည့်ဖွင့်ရန်</a>
+      <img id="scan" decoding="async" loading="lazy" alt="">
+      <details id="transcript" hidden><summary>ကူးယူနိုင်သော စာသား</summary><div id="page-text"></div></details>
+    </section>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

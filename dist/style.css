@@ -97,6 +97,7 @@ select {
 .wheel text { fill: var(--ink); text-anchor: middle; dominant-baseline: central; font-size: 12px; font-weight: 800; }
 .wheel text.active-number { fill: white; }
 .wheel .center-title { font-size: 20px; }
+.pairs-title { text-align: center; }
 .pairs { overflow-x: auto; }
 .pair-grid { width: 100%; border-collapse: collapse; table-layout: fixed; background: var(--white); border: 1px solid #b4cfe0; border-radius: 10px; overflow: hidden; }
 .pair-grid td { border: 1px solid #c5dce9; padding: 7px 6px; text-align: center; vertical-align: middle; line-height: 1.45; }

@@ -324,10 +324,7 @@ function makeBadges(starIndex, roles) {
 function fillStarCell(cell, offset) {
   const starIndex = starAt(currentWheel, offset);
   cell.dataset.offset = String(offset);
-  const index = document.createElement('span');
-  index.className = 'number';
-  index.textContent = starNumber(starIndex);
-  cell.append(index, document.createTextNode(stars[starIndex]));
+  cell.textContent = stars[starIndex];
 }
 
 function addGridRow(tbody, offsets, roles) {
@@ -344,10 +341,7 @@ function addGridRow(tbody, offsets, roles) {
     const wrap = document.createElement('div');
     wrap.className = 'single-wrap';
     const nameWrap = document.createElement('span');
-    const index = document.createElement('span');
-    index.className = 'number';
-    index.textContent = starNumber(starIndex);
-    nameWrap.append(index, document.createTextNode(stars[starIndex]));
+    nameWrap.textContent = stars[starIndex];
     wrap.append(nameWrap);
     const badges = makeBadges(starIndex, roles);
     if (badges.childElementCount) wrap.append(badges);
@@ -633,6 +627,7 @@ function renderScopeUI() {
     find('scope-badge').textContent = isNatal ? 'မူလစက်' : 'ကောဇာစက်';
   }
   find('wheel-title').textContent = scopeLabel() + ' ' + currentWheel.name + 'စက်။';
+  if (find('pairs-title')) find('pairs-title').textContent = currentWheel.name + 'စက်';
   setDefaultFocusForWheel();
   renderPairs();
   renderVedhaPanel();

@@ -50,9 +50,14 @@
       </div>
       <p id="time-status" class="hint" aria-live="polite"></p>
     </section>
+    <div class="scope-bar" role="tablist" aria-label="မူလစက် နှင့် ကောဇာစက် ရွေးရန်">
+      <button id="scope-natal" class="scope-btn" type="button" role="tab" aria-selected="false">မူလစက်</button>
+      <button id="scope-transit" class="scope-btn" type="button" role="tab" aria-selected="true">ကောဇာစက်</button>
+    </div>
     <nav id="modes" class="modes" aria-label="စက်ရွေးရန်"></nav>
     <section class="workspace" aria-labelledby="wheel-title">
-      <div class="panel result">
+      <div id="result-panel" class="panel result">
+        <p id="scope-badge" class="scope-pill"></p>
         <h2 id="wheel-title"></h2>
         <p id="alias" class="eyebrow" hidden></p>
         <figure class="wheel">
@@ -69,26 +74,18 @@
     <section id="vedha-panel" class="panel controls vedha-panel" aria-labelledby="vedha-title">
       <div class="section-head">
         <div>
-          <h2 id="vedha-title">မူလ နှင့် ကောဇာ ဂြိုဟ်အထွင်း</h2>
+          <h2 id="vedha-title">ဂြိုဟ်အထွင်း</h2>
           <p class="hint">အတန်းတစ်ခုကို နှိပ်ပါက စက်ဝိုင်းပေါ်တွင် သက်ဆိုင်ရာ စီးနက္ခတ်နှင့် အထွင်းနက္ခတ်ကို ပြသပေးပါသည်။</p>
         </div>
-        <div class="seg-tabs" role="tablist" aria-label="ဂြိုဟ်အထွင်းအမျိုးအစား">
-          <button id="tab-vedha-natal" type="button" role="tab" aria-selected="true">မူလ ဂြိုဟ်အထွင်း</button>
-          <button id="tab-vedha-transit" type="button" role="tab" aria-selected="false">ကောဇာ ဂြိုဟ်အထွင်း</button>
-        </div>
       </div>
-      <div id="focal-summary" class="focal-grid"></div>
+      <div id="focal-summary" class="focal-grid single-focal"></div>
       <div id="vedha-table-wrap" class="table-wrap"></div>
     </section>
     <section id="changes-panel" class="panel controls changes-panel" aria-labelledby="changes-title">
       <div class="section-head">
         <div>
           <h2 id="changes-title">ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းချိန်</h2>
-          <p class="hint">ရွေးချယ်ထားသော မူလ သို့မဟုတ် ကောဇာအချိန်မှစ၍ ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းမည့်အချိန်များကို မြန်မာစံတော်ချိန်ဖြင့် တွက်ပြထားပါသည်။</p>
-        </div>
-        <div class="seg-tabs" role="tablist" aria-label="နက္ခတ်ပြောင်းအမျိုးအစား">
-          <button id="tab-changes-transit" type="button" role="tab" aria-selected="true">ကောဇာ နက္ခတ်ပြောင်း</button>
-          <button id="tab-changes-natal" type="button" role="tab" aria-selected="false">မူလ နက္ခတ်ပြောင်း</button>
+          <p class="hint">ရွေးချယ်ထားသော အချိန်မှစ၍ ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းမည့်အချိန်များကို မြန်မာစံတော်ချိန်ဖြင့် တွက်ပြထားပါသည်။</p>
         </div>
       </div>
       <div class="filter-bar">

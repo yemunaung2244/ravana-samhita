@@ -98,9 +98,11 @@ let natalInstant = null;
 let transitInstant = null;
 let natalStars = null;
 let transitStars = null;
-let vedhaTab = 'natal';
-let changesTab = 'transit';
+let chartScope = 'transit';
 const changeCache = new Map();
+
+const scopeLabel = () => (chartScope === 'natal' ? 'မူလ' : 'ကောဇာ');
+const activePlanetStars = () => (chartScope === 'natal' ? natalStars : transitStars);
 
 function birthRoleMap() {
   const positions = birthStarPositions(selectedBirthStar);
@@ -158,6 +160,7 @@ function computeStarChanges(baseInstant, days) {
 function drawWheel() {
   const chart = find('wheel');
   const roles = birthRoleMap();
+  const scopeStars = activePlanetStars();
   chart.replaceChildren(
     svg('desc', {}, selectedOffsets.map(offset => label(starAt(currentWheel, offset))).join(' — ')),
     svg('circle', { cx: 260, cy: 260, r: 237, class: 'grid' }),
@@ -173,21 +176,21 @@ function drawWheel() {
   const [x1, y1] = point(ends[0]);
   const [x2, y2] = point(ends[1]);
   chart.append(svg('line', { x1, y1, x2, y2, class: 'axis' }));
-  chart.append(svg('circle', { cx: 260, cy: 260, r: 92, fill: '#e6f5ff', class: 'center' }));
-  chart.append(svg('text', { x: 260, y: 260, class: 'center-title' }, currentWheel.name + 'စက်'));
+  const centerFill = chartScope === 'natal' ? '#e6f5ff' : '#e6f7ee';
+  chart.append(svg('circle', { cx: 260, cy: 260, r: 92, fill: centerFill, class: 'center' }));
+  chart.append(svg('text', { x: 260, y: 247, class: 'center-title' }, currentWheel.name + 'စက်'));
+  chart.append(svg('text', { x: 260, y: 274, fill: chartScope === 'natal' ? '#124b73' : '#145c3c' }, scopeLabel() + 'စက်'));
   for (let offset = 0; offset < 28; offset++) {
     const [x, y] = point(offset);
     const starIndex = starAt(currentWheel, offset);
     const active = selectedOffsets.includes(offset);
     const role = roles.get(starIndex);
-    const natalHere = planetsAtStar(natalStars, starIndex);
-    const transitHere = planetsAtStar(transitStars, starIndex);
+    const planetsHere = planetsAtStar(scopeStars, starIndex);
     const node = svg('g', { style: 'cursor: pointer' });
     const titleParts = [
       numberedLabel(starIndex),
       role ? role.title : '',
-      natalHere.length ? 'မူလ: ' + natalHere.join('၊ ') : '',
-      transitHere.length ? 'ကောဇာ: ' + transitHere.join('၊ ') : '',
+      planetsHere.length ? scopeLabel() + ': ' + planetsHere.join('၊ ') : '',
     ].filter(Boolean);
     const circleClass = [active ? 'node active' : 'node', role && !active ? 'birth-node' : ''].filter(Boolean).join(' ');
     node.append(
@@ -253,16 +256,10 @@ function rowLabel(offset, roles) {
     badge.textContent = role.shortTitle;
     span.append(badge);
   }
-  for (const pName of planetsAtStar(natalStars, starIndex)) {
+  for (const pName of planetsAtStar(activePlanetStars(), starIndex)) {
     const badge = document.createElement('span');
-    badge.className = 'planet-badge natal';
-    badge.textContent = 'မူလ ' + pName;
-    span.append(badge);
-  }
-  for (const pName of planetsAtStar(transitStars, starIndex)) {
-    const badge = document.createElement('span');
-    badge.className = 'planet-badge transit';
-    badge.textContent = 'ကောဇာ ' + pName;
+    badge.className = 'planet-badge ' + chartScope;
+    badge.textContent = pName;
     span.append(badge);
   }
   return span;
@@ -286,60 +283,45 @@ function renderVedhaPanel() {
   const tableWrap = find('vedha-table-wrap');
   if (!focalWrap || !tableWrap) return;
 
-  find('tab-vedha-natal').setAttribute('aria-selected', String(vedhaTab === 'natal'));
-  find('tab-vedha-transit').setAttribute('aria-selected', String(vedhaTab === 'transit'));
-
+  const isNatal = chartScope === 'natal';
+  const activeMap = activePlanetStars();
   const focalId = currentWheel.id;
   const focalName = currentWheel.name;
-  const cards = [];
-  for (const [kind, title, sourceStars, cardClass] of [
-    ['natal', 'မူလ ' + focalName + ' အထွင်း', natalStars, 'focal-card'],
-    ['transit', 'ကောဇာ ' + focalName + ' အထွင်း', transitStars, 'focal-card transit-card'],
-  ]) {
-    const card = document.createElement('article');
-    card.className = cardClass;
-    const h3 = document.createElement('h3');
-    h3.textContent = title;
-    card.append(h3);
-    if (!sourceStars) {
-      const p = document.createElement('p');
-      p.className = 'hint';
-      p.textContent = kind === 'natal'
-        ? 'မူလ မွေးသက္ကရာဇ်နှင့် အချိန် ထည့်သွင်းပါက ဤနေရာတွင် ပြသပေးပါမည်။'
-        : 'ကောဇာ ရက်စွဲနှင့် အချိန် ထည့်သွင်းပါ။';
-      card.append(p);
-    } else {
-      const star = sourceStars[focalId];
-      const opp = oppositeStarOf(currentWheel, star);
-      const natalPiercers = planetsAtStar(natalStars, opp);
-      const transitPiercers = planetsAtStar(transitStars, opp);
-      const lines = [
-        'စီးနက္ခတ်: ' + numberedLabel(star),
-        'သမသတ် အထွင်းနက္ခတ်: ' + numberedLabel(opp),
-        'မူလ ထွင်းဂြိုဟ်: ' + (natalPiercers.length ? natalPiercers.join('၊ ') : 'မရှိပါ'),
-        'ကောဇာ ထွင်းဂြိုဟ်: ' + (transitPiercers.length ? transitPiercers.join('၊ ') : 'မရှိပါ'),
-      ];
-      for (const text of lines) {
-        const p = document.createElement('p');
-        p.className = 'focal-line';
-        p.textContent = text;
-        card.append(p);
-      }
-    }
-    cards.push(card);
-  }
-  focalWrap.replaceChildren(...cards);
+  find('vedha-title').textContent = scopeLabel() + ' ' + focalName + 'စက် ဂြိုဟ်အထွင်း';
 
-  const activeMap = vedhaTab === 'natal' ? natalStars : transitStars;
+  const card = document.createElement('article');
+  card.className = isNatal ? 'focal-card' : 'focal-card transit-card';
+  const h3 = document.createElement('h3');
+  h3.textContent = scopeLabel() + ' ' + focalName + ' အထွင်း';
+  card.append(h3);
   if (!activeMap) {
-    const note = document.createElement('p');
-    note.className = 'empty-note';
-    note.textContent = vedhaTab === 'natal'
-      ? 'မူလ ဂြိုဟ်အထွင်း ကြည့်ရှုရန် အပေါ်တွင် မူလ မွေးသက္ကရာဇ်နှင့် အချိန် ထည့်သွင်းပေးပါ။'
-      : 'ကောဇာ ဂြိုဟ်အထွင်း ကြည့်ရှုရန် ကောဇာ ရက်စွဲနှင့် အချိန် ထည့်သွင်းပေးပါ။';
-    tableWrap.replaceChildren(note);
+    const p = document.createElement('p');
+    p.className = 'hint';
+    p.textContent = isNatal
+      ? 'မူလစက် ကြည့်ရှုရန် အပေါ်တွင် မူလ မွေးသက္ကရာဇ်နှင့် အချိန် ထည့်သွင်းပေးပါ။'
+      : 'ကောဇာစက် ကြည့်ရှုရန် ကောဇာ ရက်စွဲနှင့် အချိန် ထည့်သွင်းပေးပါ။';
+    card.append(p);
+    focalWrap.replaceChildren(card);
+    tableWrap.replaceChildren();
     return;
   }
+
+  const focalStar = activeMap[focalId];
+  const focalOpp = oppositeStarOf(currentWheel, focalStar);
+  const focalNatalPiercers = planetsAtStar(natalStars, focalOpp);
+  const focalTransitPiercers = planetsAtStar(transitStars, focalOpp);
+  for (const text of [
+    scopeLabel() + ' စီးနက္ခတ်: ' + numberedLabel(focalStar),
+    'သမသတ် အထွင်းနက္ခတ်: ' + numberedLabel(focalOpp),
+    'မူလ ထွင်းဂြိုဟ်: ' + (focalNatalPiercers.length ? focalNatalPiercers.join('၊ ') : 'မရှိပါ'),
+    'ကောဇာ ထွင်းဂြိုဟ်: ' + (focalTransitPiercers.length ? focalTransitPiercers.join('၊ ') : 'မရှိပါ'),
+  ]) {
+    const p = document.createElement('p');
+    p.className = 'focal-line';
+    p.textContent = text;
+    card.append(p);
+  }
+  focalWrap.replaceChildren(card);
 
   const roles = birthRoleMap();
   const table = document.createElement('table');
@@ -347,7 +329,7 @@ function renderVedhaPanel() {
   const head = table.createTHead().insertRow();
   const headers = [
     'ဂြိုဟ်',
-    vedhaTab === 'natal' ? 'မူလ စီးနက္ခတ်' : 'ကောဇာ စီးနက္ခတ်',
+    isNatal ? 'မူလ စီးနက္ခတ်' : 'ကောဇာ စီးနက္ခတ်',
     'သမသတ် အထွင်းနက္ခတ်',
     'မူလ ထွင်းဂြိုဟ်',
     'ကောဇာ ထွင်းဂြိုဟ်',
@@ -393,14 +375,14 @@ function renderVedhaPanel() {
 function renderChangesPanel() {
   const wrap = find('changes-table-wrap');
   if (!wrap) return;
-  find('tab-changes-transit').setAttribute('aria-selected', String(changesTab === 'transit'));
-  find('tab-changes-natal').setAttribute('aria-selected', String(changesTab === 'natal'));
+  const isNatal = chartScope === 'natal';
+  find('changes-title').textContent = scopeLabel() + ' ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းချိန်';
 
-  const baseInstant = changesTab === 'natal' ? natalInstant : transitInstant;
+  const baseInstant = isNatal ? natalInstant : transitInstant;
   if (!baseInstant) {
     const note = document.createElement('p');
     note.className = 'empty-note';
-    note.textContent = changesTab === 'natal'
+    note.textContent = isNatal
       ? 'မူလ နက္ခတ်ပြောင်းချိန် ကြည့်ရှုရန် အပေါ်တွင် မူလ မွေးသက္ကရာဇ်နှင့် အချိန် ထည့်သွင်းပေးပါ။'
       : 'ကောဇာ နက္ခတ်ပြောင်းချိန် ကြည့်ရှုရန် ကောဇာ ရက်စွဲနှင့် အချိန် ထည့်သွင်းပေးပါ။';
     wrap.replaceChildren(note);
@@ -522,6 +504,21 @@ function renderBlocks(container, blocks = []) {
   }));
 }
 
+function renderScopeUI() {
+  const isNatal = chartScope === 'natal';
+  find('scope-natal')?.setAttribute('aria-selected', String(isNatal));
+  find('scope-transit')?.setAttribute('aria-selected', String(!isNatal));
+  find('result-panel')?.classList.toggle('is-transit', !isNatal);
+  if (find('scope-badge')) {
+    find('scope-badge').textContent = isNatal ? 'မူလစက်' : 'ကောဇာစက်';
+  }
+  find('wheel-title').textContent = scopeLabel() + ' ' + currentWheel.name + 'စက်။';
+  renderPairs();
+  renderVedhaPanel();
+  renderChangesPanel();
+  renderBirthTable();
+}
+
 function updateTimeCalculations(syncBirth = false) {
   const eph = window.RAVANA_EPHEMERIS;
   if (!eph) return;
@@ -561,19 +558,13 @@ function updateTimeCalculations(syncBirth = false) {
     transitStars = null;
   }
 
-  if (!natalStars && vedhaTab === 'natal' && transitStars) {
-    vedhaTab = 'transit';
-  }
   const statusEl = find('time-status');
   if (statusEl) {
     statusEl.textContent = statusParts.length
       ? statusParts.join(' · ')
       : 'မူလ ဂြိုဟ်အထွင်းနှင့် နက္ခတ်ပြောင်းကြည့်ရန် မွေးသက္ကရာဇ်/အချိန် ထည့်သွင်းပါ။';
   }
-  renderPairs();
-  renderVedhaPanel();
-  renderChangesPanel();
-  renderBirthTable();
+  renderScopeUI();
 }
 
 function showWheel(wheel) {
@@ -582,13 +573,9 @@ function showWheel(wheel) {
   for (const [index, button] of [...find('modes').children].entries()) {
     button.setAttribute('aria-pressed', String(wheel === wheels[index]));
   }
-  find('wheel-title').textContent = wheel.name + 'စက်။';
   find('alias').textContent = wheel.alias || '';
   find('alias').hidden = !wheel.alias;
-  renderPairs();
-  renderVedhaPanel();
-  renderChangesPanel();
-  renderBirthTable();
+  renderScopeUI();
   const notes = window.RAVANA_NOTES?.wheels?.[wheel.name] || [];
   find('notes-title').textContent = wheel.name + 'စက် ရှင်းလင်းချက်';
   renderBlocks(find('notes-body'), notes);
@@ -628,13 +615,11 @@ if (changePlanetSelect) {
 }
 
 find('change-days')?.addEventListener('change', renderChangesPanel);
-find('tab-vedha-natal')?.addEventListener('click', () => { vedhaTab = 'natal'; renderVedhaPanel(); });
-find('tab-vedha-transit')?.addEventListener('click', () => { vedhaTab = 'transit'; renderVedhaPanel(); });
-find('tab-changes-transit')?.addEventListener('click', () => { changesTab = 'transit'; renderChangesPanel(); });
-find('tab-changes-natal')?.addEventListener('click', () => { changesTab = 'natal'; renderChangesPanel(); });
+find('scope-natal')?.addEventListener('click', () => { chartScope = 'natal'; renderScopeUI(); });
+find('scope-transit')?.addEventListener('click', () => { chartScope = 'transit'; renderScopeUI(); });
 
 find('natal-time')?.addEventListener('change', () => {
-  if (find('natal-time').value) vedhaTab = 'natal';
+  if (find('natal-time').value) chartScope = 'natal';
   updateTimeCalculations(true);
 });
 find('transit-time')?.addEventListener('change', () => updateTimeCalculations(false));

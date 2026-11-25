@@ -41,7 +41,16 @@ button, select, summary { cursor: pointer; }
 }
 .orbit i { position: absolute; inset: 11%; border: 1px dashed #82aac5; border-radius: 50%; }
 .orbit i::before { content: ''; position: absolute; right: 3%; top: 12%; width: 7px; height: 7px; background: #2f7199; border-radius: 50%; }
-.modes { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; padding: 5px; margin: 20px 0 16px; background: #e4f2fb; border: 1px solid var(--line); border-radius: 13px; }
+.scope-bar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 6px; margin: 18px 0 10px; background: #e4f2fb; border: 1px solid var(--line); border-radius: 14px; }
+.scope-btn { border-radius: 10px; min-height: 48px; border: 1px solid transparent; background: transparent; color: var(--accent); font-weight: 800; font-size: 1.02rem; }
+.scope-btn:hover { background: #edf7fd; }
+.scope-btn[aria-selected="true"] { background: var(--white); border-color: var(--line); color: var(--ink); box-shadow: 0 2px 6px #153d5716; }
+#scope-natal[aria-selected="true"] { color: #124b73; border-color: #9ec6e2; }
+#scope-transit[aria-selected="true"] { color: #145c3c; border-color: #95d2b3; background: #f2fbf6; }
+.scope-pill { display: inline-block; margin-bottom: 6px; padding: 2px 10px; border-radius: 999px; font-size: .82rem; font-weight: 800; background: #d6ecfb; color: #124b73; }
+.result.is-transit { background: #e6f7ee; border-color: #b4dfc7; }
+.result.is-transit .scope-pill { background: #cdeedd; color: #145c3c; }
+.modes { display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 6px; padding: 5px; margin: 0 0 16px; background: #e4f2fb; border: 1px solid var(--line); border-radius: 13px; }
 .modes button { border-radius: 9px; min-height: 52px; padding: 5px; border: 1px solid transparent; color: var(--accent); background: transparent; font-weight: 800; }
 .modes button[aria-pressed="true"] { background: var(--white); border-color: var(--line); color: var(--ink); box-shadow: 0 2px 5px #153d5712; }
 .modes button:hover, .pair:hover, .ghost-btn:hover { background: #e4f3fc; }
@@ -96,6 +105,7 @@ select {
 .seg-tabs button { border: 1px solid transparent; background: transparent; color: var(--accent); font-weight: 800; padding: 7px 14px; border-radius: 8px; font-size: .9rem; }
 .seg-tabs button[aria-selected="true"] { background: var(--white); border-color: var(--line); color: var(--ink); box-shadow: 0 1px 4px #153d5712; }
 .focal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.focal-grid.single-focal { grid-template-columns: 1fr; }
 .focal-card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: #f6fbff; display: grid; gap: 4px; }
 .focal-card.transit-card { background: #f3fbf7; border-color: #b7dfc9; }
 .focal-card h3 { font-size: 1rem; color: var(--accent); }

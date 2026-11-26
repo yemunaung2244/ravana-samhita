@@ -184,6 +184,44 @@ function focusStarOnWheel(starIndex, subject = '') {
   selectOffsets(pairForOffset(occ), true);
 }
 
+function openStarDetails(star) {
+  const opposite = oppositeStarOf(currentWheel, star);
+  const role = birthRoleMap().get(star);
+  const occupants = map => planetsAtStar(map, star).join('၊ ') || 'မရှိပါ';
+  const wheelHadFocus = find('wheel').contains(document.activeElement);
+  focusStarOnWheel(star);
+  if (wheelHadFocus) find('wheel').querySelector('[data-star-detail="' + star + '"]').focus();
+  find('star-detail-title').textContent = numberedLabel(star);
+  const rows = [
+    ['လက်ရှိစက်', scopeLabel() + ' ' + currentWheel.name + 'စက်'],
+    ['သမသတ် အထွင်းနက္ခတ်', numberedLabel(opposite)],
+    ['မူလ စီးဂြိုဟ်', occupants(natalStars)],
+    ['ကောဇာ စီးဂြိုဟ်', occupants(transitStars)],
+  ];
+  if (role) rows.push(['ဇနမဆယ်ပါး', role.title]);
+  find('star-detail-body').replaceChildren(...rows.flatMap(([name, value]) =>
+    ['dt', 'dd'].map((tag, index) => {
+      const node = document.createElement(tag);
+      node.textContent = index === 0 ? name : value;
+      return node;
+    })
+  ));
+  find('star-detail').showModal();
+}
+
+function starButton(star, text = numberedLabel(star)) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'star-detail-button';
+  button.setAttribute('aria-haspopup', 'dialog');
+  button.textContent = text;
+  button.addEventListener('click', event => {
+    event.stopPropagation();
+    openStarDetails(star);
+  });
+  return button;
+}
+
 function drawWheel() {
   const chart = find('wheel');
   const roles = birthRoleMap();
@@ -244,9 +282,16 @@ function drawWheel() {
         svg('text', { x: bx, y: by, class: 'birth-badge-text' }, number(role.order)),
       );
     }
-    node.addEventListener('click', () => {
-      const pHere = planetsAtStar(activePlanetStars(), starIndex);
-      focusStarOnWheel(starIndex, pHere.length ? scopeLabel() + ' ' + pHere.join('၊ ') : '');
+    node.setAttribute('data-star-detail', starIndex);
+    node.setAttribute('role', 'button');
+    node.setAttribute('tabindex', '0');
+    node.setAttribute('aria-label', titleParts.join(' · '));
+    node.setAttribute('aria-haspopup', 'dialog');
+    node.addEventListener('click', () => openStarDetails(starIndex));
+    node.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      openStarDetails(starIndex);
     });
     chart.append(node);
   }
@@ -324,7 +369,7 @@ function makeBadges(starIndex, roles) {
 function fillStarCell(cell, offset) {
   const starIndex = starAt(currentWheel, offset);
   cell.dataset.offset = String(offset);
-  cell.textContent = stars[starIndex];
+  cell.append(starButton(starIndex, stars[starIndex]));
 }
 
 function addGridRow(tbody, offsets, roles) {
@@ -340,9 +385,7 @@ function addGridRow(tbody, offsets, roles) {
     const starIndex = starAt(currentWheel, offsets[0]);
     const wrap = document.createElement('div');
     wrap.className = 'single-wrap';
-    const nameWrap = document.createElement('span');
-    nameWrap.textContent = stars[starIndex];
-    wrap.append(nameWrap);
+    wrap.append(starButton(starIndex, stars[starIndex]));
     const badges = makeBadges(starIndex, roles);
     if (badges.childElementCount) wrap.append(badges);
     td.append(wrap);
@@ -405,15 +448,16 @@ function renderVedhaPanel() {
   const focalOpp = oppositeStarOf(currentWheel, focalStar);
   const focalNatalPiercers = planetsAtStar(natalStars, focalOpp);
   const focalTransitPiercers = planetsAtStar(transitStars, focalOpp);
-  for (const text of [
-    scopeLabel() + ' စီးနက္ခတ်: ' + numberedLabel(focalStar),
-    'သမသတ် အထွင်းနက္ခတ်: ' + numberedLabel(focalOpp),
-    'မူလ ထွင်းဂြိုဟ်: ' + (focalNatalPiercers.length ? focalNatalPiercers.join('၊ ') : 'မရှိပါ'),
-    'ကောဇာ ထွင်းဂြိုဟ်: ' + (focalTransitPiercers.length ? focalTransitPiercers.join('၊ ') : 'မရှိပါ'),
+  for (const [text, star] of [
+    [scopeLabel() + ' စီးနက္ခတ်: ', focalStar],
+    ['သမသတ် အထွင်းနက္ခတ်: ', focalOpp],
+    ['မူလ ထွင်းဂြိုဟ်: ' + (focalNatalPiercers.length ? focalNatalPiercers.join('၊ ') : 'မရှိပါ')],
+    ['ကောဇာ ထွင်းဂြိုဟ်: ' + (focalTransitPiercers.length ? focalTransitPiercers.join('၊ ') : 'မရှိပါ')],
   ]) {
     const p = document.createElement('p');
     p.className = 'focal-line';
     p.textContent = text;
+    if (star !== undefined) p.append(starButton(star));
     card.append(p);
   }
   focalWrap.replaceChildren(card);
@@ -459,7 +503,12 @@ function renderVedhaPanel() {
       transitPiercers.length ? transitPiercers.join('၊ ') : '—',
       roleNotes.length ? roleNotes.join(' · ') : '—',
     ];
-    for (const value of cells) tr.insertCell().textContent = value;
+    const starColumns = new Map([[1, star], [2, opp]]);
+    cells.forEach((value, index) => {
+      const cell = tr.insertCell();
+      if (starColumns.has(index)) cell.append(starButton(starColumns.get(index), value));
+      else cell.textContent = value;
+    });
     tr.addEventListener('click', () => focusStarOnWheel(star, scopeLabel() + ' ' + planet.name));
   }
   tableWrap.replaceChildren(table);
@@ -525,7 +574,12 @@ function renderChangesPanel() {
       yangonFormatter.format(row.time),
       numberedLabel(opp) + (oppExtra.length ? ' (' + oppExtra.join(' · ') + ')' : ''),
     ];
-    for (const value of cells) tr.insertCell().textContent = value;
+    const starColumns = new Map([[1, row.fromStar], [2, row.toStar], [4, opp]]);
+    cells.forEach((value, index) => {
+      const cell = tr.insertCell();
+      if (starColumns.has(index)) cell.append(starButton(starColumns.get(index), value));
+      else cell.textContent = value;
+    });
     const actionCell = tr.insertCell();
     const jumpBtn = document.createElement('button');
     jumpBtn.type = 'button';
@@ -582,7 +636,12 @@ function renderBirthTable() {
       numberedLabel(star),
       numberedLabel(oppositeStar),
     ];
-    for (const value of cells) tr.insertCell().textContent = value;
+    const starColumns = new Map([[3, star], [4, oppositeStar]]);
+    cells.forEach((value, index) => {
+      const cell = tr.insertCell();
+      if (starColumns.has(index)) cell.append(starButton(starColumns.get(index), value));
+      else cell.textContent = value;
+    });
     tr.addEventListener('click', () => focusStarOnWheel(star, title));
   });
   wrap.replaceChildren(table);

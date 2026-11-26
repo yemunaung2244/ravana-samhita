@@ -168,3 +168,15 @@ select {
   .pair-grid td.single-cell { font-size: .85rem; }
   .role-badge, .planet-badge { font-size: .66rem; padding: 0 .35em; }
 }
+
+.result-disclosure { min-width: 0; }
+.result-disclosure > summary { cursor: pointer; }
+.result-disclosure > summary h2 { display: inline; }
+.result-disclosure > summary::marker { color: var(--accent); }
+.result-disclosure > .disclosure-body { margin-top: 14px; background: transparent; }
+
+.star-detail-button { font: inherit; color: var(--accent); background: transparent; border: 0; padding: 0; text-align: inherit; text-decoration: underline; cursor: pointer; }
+#star-detail { width: min(92vw, 32rem); max-height: 85dvh; box-sizing: border-box; overflow: auto; border: 1px solid var(--line); border-radius: 14px; padding: 18px; color: var(--ink); }
+#star-detail::backdrop { background: #142e4577; }
+#star-detail dt { font-weight: 700; }
+#star-detail dd { margin: 0 0 10px; overflow-wrap: anywhere; }

@@ -61,7 +61,7 @@
         <h2 id="wheel-title"></h2>
         <p id="alias" class="eyebrow" hidden></p>
         <figure class="wheel">
-          <svg id="wheel" viewBox="0 0 520 520" role="img" aria-labelledby="wheel-title"></svg>
+          <svg id="wheel" viewBox="0 0 520 520" role="group" aria-labelledby="wheel-title"></svg>
           <figcaption class="wheel-legend">
             <span><i class="dot dot-occupied"></i>အစီး</span>
             <span><i class="dot dot-pierced"></i>အထွင်း</span>
@@ -75,52 +75,57 @@
         <div id="pairs" class="pairs"></div>
       </div>
     </section>
-    <section id="vedha-panel" class="panel controls vedha-panel" aria-labelledby="vedha-title">
-      <div class="section-head">
-        <div>
-          <h2 id="vedha-title">ဂြိုဟ်အထွင်း</h2>
-          <p class="hint">အတန်းတစ်ခုကို နှိပ်ပါက စက်ဝိုင်းပေါ်တွင် သက်ဆိုင်ရာ စီးနက္ခတ်နှင့် အထွင်းနက္ခတ်ကို ပြသပေးပါသည်။</p>
+    <details id="vedha-panel" class="panel result-disclosure vedha-panel" aria-labelledby="vedha-title">
+      <summary><h2 id="vedha-title">ဂြိုဟ်အထွင်း</h2></summary>
+      <div class="disclosure-body controls">
+        <p class="hint">အတန်းတစ်ခုကို နှိပ်ပါက စက်ဝိုင်းပေါ်တွင် သက်ဆိုင်ရာ စီးနက္ခတ်နှင့် အထွင်းနက္ခတ်ကို ပြသပေးပါသည်။</p>
+        <div id="focal-summary" class="focal-grid single-focal"></div>
+        <div id="vedha-table-wrap" class="table-wrap"></div>
+      </div>
+    </details>
+    <details id="changes-panel" class="panel result-disclosure changes-panel" aria-labelledby="changes-title">
+      <summary><h2 id="changes-title">ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းချိန်</h2></summary>
+      <div class="disclosure-body controls">
+        <p class="hint">ရွေးချယ်ထားသော အချိန်မှစ၍ ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းမည့်အချိန်များကို မြန်မာစံတော်ချိန်ဖြင့် တွက်ပြထားပါသည်။</p>
+        <div class="filter-bar">
+          <label>ကာလအပိုင်းအခြား
+            <select id="change-days">
+              <option value="7">နောက် ၇ ရက်</option>
+              <option value="30" selected>နောက် ၃၀ ရက်</option>
+              <option value="90">နောက် ၉၀ ရက်</option>
+            </select>
+          </label>
+          <label>ဂြိုဟ်ရွေးရန်
+            <select id="change-planet"></select>
+          </label>
         </div>
+        <div id="changes-table-wrap" class="table-wrap"></div>
       </div>
-      <div id="focal-summary" class="focal-grid single-focal"></div>
-      <div id="vedha-table-wrap" class="table-wrap"></div>
-    </section>
-    <section id="changes-panel" class="panel controls changes-panel" aria-labelledby="changes-title">
-      <div class="section-head">
-        <div>
-          <h2 id="changes-title">ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းချိန်</h2>
-          <p class="hint">ရွေးချယ်ထားသော အချိန်မှစ၍ ဂြိုဟ်ကိုးလုံး နက္ခတ်ပြောင်းမည့်အချိန်များကို မြန်မာစံတော်ချိန်ဖြင့် တွက်ပြထားပါသည်။</p>
+    </details>
+    <details id="birth-stars" class="panel result-disclosure birth-stars" aria-labelledby="birth-stars-title">
+      <summary><h2 id="birth-stars-title">ဇနမဆယ်ပါးနက္ခတ်</h2></summary>
+      <div class="disclosure-body controls">
+        <div class="birth-header">
+          <div>
+            <p class="hint">ဇနမနက္ခတ်ကို ၁ အဖြစ်ထား၍ (အဘီဇိမပါသော နက္ခတ် ၂၇ လုံးအစဉ်ဖြင့်) ရေတွက်ပြီး လက်ရှိစက်၏ အထွင်းနက္ခတ်နှင့် တွဲပြထားပါသည်။</p>
+          </div>
+          <label class="birth-picker">ဇနမနက္ခတ် ရွေးရန်<select id="birth-star"></select></label>
         </div>
+        <div id="birth-table-wrap" class="table-wrap"></div>
       </div>
-      <div class="filter-bar">
-        <label>ကာလအပိုင်းအခြား
-          <select id="change-days">
-            <option value="7">နောက် ၇ ရက်</option>
-            <option value="30" selected>နောက် ၃၀ ရက်</option>
-            <option value="90">နောက် ၉၀ ရက်</option>
-          </select>
-        </label>
-        <label>ဂြိုဟ်ရွေးရန်
-          <select id="change-planet"></select>
-        </label>
+    </details>
+    <details id="notes" class="panel result-disclosure notes" aria-labelledby="notes-title">
+      <summary><h2 id="notes-title">စက် ရှင်းလင်းချက်</h2></summary>
+      <div class="disclosure-body controls">
+        <div id="notes-body" class="reading"></div>
       </div>
-      <div id="changes-table-wrap" class="table-wrap"></div>
-    </section>
-    <section id="birth-stars" class="panel controls birth-stars" aria-labelledby="birth-stars-title">
-      <div class="birth-header">
-        <div>
-          <h2 id="birth-stars-title">ဇနမဆယ်ပါးနက္ခတ်</h2>
-          <p class="hint">ဇနမနက္ခတ်ကို ၁ အဖြစ်ထား၍ (အဘီဇိမပါသော နက္ခတ် ၂၇ လုံးအစဉ်ဖြင့်) ရေတွက်ပြီး လက်ရှိစက်၏ အထွင်းနက္ခတ်နှင့် တွဲပြထားပါသည်။</p>
-        </div>
-        <label class="birth-picker">ဇနမနက္ခတ် ရွေးရန်<select id="birth-star"></select></label>
-      </div>
-      <div id="birth-table-wrap" class="table-wrap"></div>
-    </section>
-    <section id="notes" class="panel controls notes" aria-labelledby="notes-title">
-      <h2 id="notes-title"></h2>
-      <div id="notes-body" class="reading"></div>
-    </section>
+    </details>
   </main>
+  <dialog id="star-detail" aria-labelledby="star-detail-title">
+    <h2 id="star-detail-title"></h2>
+    <dl id="star-detail-body"></dl>
+    <form method="dialog"><button autofocus class="mini-btn">ပိတ်ရန်</button></form>
+  </dialog>
   <script defer src="./ephemeris.js"></script>
   <script defer src="./notes.js"></script>
   <script defer src="./app.js"></script>
